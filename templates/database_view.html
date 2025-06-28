@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Database</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .table-container {
+            overflow-x: auto;
+        }
+        .table {
+            min-width: 1200px;
+        }
+        .action-buttons {
+            white-space: nowrap;
+        }
+        .table-dark {
+        --bs-table-bg: #2e7d32; /* Green background */
+        --bs-table-color: white; /* White text */
+        }
+        .zip-code-input {
+         max-width: 200px;  /* Makes the zip code field narrower */
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2e7d32;">
+    <div class="container-fluid">
+        <a class="navbar-brand text-white" href="#">Student Data Manager</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active text-white fw-bold" href="/home">View Database</a>
+                </li>
+            </ul>
+        </div>
+        <div class="d-flex">
+            <span class="navbar-text text-white me-3">Welcome, {{ session['admin'] }}!</span>
+            <form action="{{ url_for('logout') }}" method="POST" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="container mt-5">
+        <h1 class="mb-4 text-success">Student Database</h1>
+
+        <div class="table-container">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>S.No</th>
+                        <!-- Basic Info -->
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>City</th>
+                        <!-- Academic Info -->
+                        <th>Roll No</th>
+                        <th>Batch</th>
+                        <th>Degree</th>
+                        <th>Faculty</th>
+                        <!-- Contact Info -->
+                        <th>Uni Email</th>
+                        <th>Personal Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Zip Code</th>  <!-- NEW COLUMN -->
+                        <!-- Actions -->
+                        <th class="action-buttons">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in data %}
+                    <tr>
+                        <td>{{ student.sno }}</td>
+                        <!-- Basic Info -->
+                        <td>{{ student.fname }}</td>
+                        <td>{{ student.lname }}</td>
+                        <td>{{ student.age }}</td>
+                        <td>{{ student.city }}</td>
+                        <!-- Academic Info -->
+                        <td>{{ student.roll_no }}</td>
+                        <td>{{ student.batch }}</td>
+                        <td>{{ student.degree }}</td>
+                        <td>{{ student.faculty }}</td>
+                        <!-- Contact Info -->
+                        <td>{{ student.email_uni }}</td>
+                        <td>{{ student.email_personal }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>{{ student.address|truncate(20) }}</td>
+                        <td>{{ student.zip_code }}</td>  <!-- NEW CELL -->
+                        <!-- Actions -->
+                        <td class="action-buttons">
+                            <a href="/update/{{ student.sno }}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="/delete/{{ student.sno }}" class="btn btn-danger btn-sm"
+                               onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

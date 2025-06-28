@@ -1,14 +1,172 @@
 <!DOCTYPE html>
 <html>
-<head><title>Update Student</title></head>
+<head>
+    <title>Update Student</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-success {
+            background-color: #2e7d32;
+            border-color: #2e7d32;
+        }
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        .alert-danger {
+            margin-top: 5px;
+            padding: 5px 10px;
+        }
+         .zip-code-input {
+         max-width: 200px;  /* Makes the zip code field narrower */
+        }
+    </style>
+</head>
 <body>
-<h2>Edit Student</h2>
-<form method="POST" action="/update/{{ student.sno }}">
-    <input type="text" name="fname" value="{{ student.fname }}"><br><br>
-    <input type="text" name="lname" value="{{ student.lname }}"><br><br>
-    <input type="number" name="age" value="{{ student.age }}"><br><br>
-    <input type="text" name="city" value="{{ student.city }}"><br><br>
-    <button type="submit">Update</button>
-</form>
+    <div class="container mt-5">
+        <h1 class="text-success mb-4">Update Student Record</h1>
+
+        <form method="POST" action="/update/{{ student.sno }}" id="updateForm">
+            {{ form.hidden_tag() }}
+
+            <!-- First Section - Basic Info -->
+            <div class="form-section">
+                <h3 class="section-title">Basic Information</h3>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        {{ form.fname(class="form-control", placeholder="First Name",
+                           pattern="[A-Za-z]+", title="Letters only", required=true) }}
+                        {% for error in form.fname.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.lname(class="form-control", placeholder="Last Name",
+                           pattern="[A-Za-z]+", title="Letters only", required=true) }}
+                        {% for error in form.lname.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.age(class="form-control", placeholder="Age",
+                           min="1", max="120", required=true) }}
+                        {% for error in form.age.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.city(class="form-control", placeholder="City",
+                           pattern="[A-Za-z\\s]+", title="Letters and spaces only", required=true) }}
+                        {% for error in form.city.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Section - Academic Info -->
+            <div class="form-section">
+                <h3 class="section-title">Academic Information</h3>
+                <div class="row g-3">
+                    <div class="col-md-2">
+                        {{ form.roll_no(class="form-control", placeholder="Roll No",
+                           min="1", max="999999", title="1-6 digits", required=true) }}
+                        {% for error in form.roll_no.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.batch(class="form-control", placeholder="Batch",
+                           pattern="[A-Za-z0-9\\-/]+", title="Alphanumeric with -/", required=true) }}
+                        {% for error in form.batch.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.degree(class="form-control", placeholder="Degree",
+                           pattern="[A-Za-z\\s\\-\\.]+", title="Letters, spaces, hyphens and dots", required=true) }}
+                        {% for error in form.degree.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.faculty(class="form-control", placeholder="Faculty",
+                           pattern="[A-Za-z\\s]+", title="Letters and spaces only", required=true) }}
+                        {% for error in form.faculty.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Third Section - Contact Info -->
+            <div class="form-section">
+                <h3 class="section-title">Contact Information</h3>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        {{ form.email_uni(class="form-control", placeholder="University Email",
+                           type="email", required=true) }}
+                        {% for error in form.email_uni.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.email_personal(class="form-control", placeholder="Personal Email",
+                           type="email", required=true) }}
+                        {% for error in form.email_personal.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.phone(class="form-control", placeholder="Phone (+92-3xx-xxxxxxx)",
+                           pattern="\\+92-3\\d{2}-\\d{7}", title="Format: +92-3xx-xxxxxxx", required=true) }}
+                        {% for error in form.phone.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.address(class="form-control", placeholder="Home Address",
+                           maxlength="150", required=true) }}
+                        {% for error in form.address.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h3 class="section-title">Location Information</h3>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        {{ form.zip_code(class="form-control", placeholder="Zip Code (5 digits)",
+                                       min="0", max="99999", required=true) }}
+                        {% for error in form.zip_code.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <!-- Action Buttons -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <a href="/home" class="btn btn-secondary">Back to Database</a>
+                </div>
+                <div class="col-md-6 d-grid">
+                    <button type="submit" class="btn btn-success"
+                            onclick="return confirmUpdate()">Apply Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+    function confirmUpdate() {
+        return confirm('The student record will be updated. Are you sure?');
+    }
+    </script>
 </body>
 </html>

@@ -1,52 +1,149 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Flask App</title>
+    <title>Student Data Manager</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-success {
+            background-color: #2e7d32;
+            border-color: #2e7d32;
+        }
+        .text-primary {
+            color: #2e7d32 !important;
+        }
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        .zip-code-input {
+        max-width: 200px;  /* Makes the zip code field narrower */
+        }
+    </style>
 </head>
 <body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">MyFlaskApp</a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="/home">Other Page</a></li>
-      </ul>
+   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2e7d32;">
+    <div class="container-fluid">
+        <a class="navbar-brand text-white" href="#">Student Data Manager</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active text-white" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/home">View Database</a>
+                </li>
+            </ul>
+        </div>
+        <div class="d-flex">
+            <span class="navbar-text text-white me-3">Welcome, {{ session['admin'] }}!</span>
+            <form action="{{ url_for('logout') }}" method="POST" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+            </form>
+        </div>
     </div>
-  </div>
 </nav>
-<div class="container mt-5">
-        <h1 class="text-primary">Welcome to My Flask App</h1>
+
+    <div class="container mt-5">
+        <h1 class="text-primary mb-4">Add New Student</h1>
+
+        <form method="POST" id="studentForm">
+            {{ form.hidden_tag() }}
+
+            <!-- First Section - Basic Info -->
+            <div class="form-section">
+                <h3 class="section-title">Basic Information</h3>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        {{ form.fname(class="form-control", placeholder="First Name", pattern="[A-Za-z]+", title="Letters only", required=true) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.lname(class="form-control", placeholder="Last Name", pattern="[A-Za-z]+", title="Letters only", required=true) }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.age(class="form-control", placeholder="Age", min="1", max="120", required=true) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.city(class="form-control", placeholder="City", pattern="[A-Za-z\\s]+", title="Letters and spaces only", required=true) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Section - Academic Info -->
+            <div class="form-section">
+                <h3 class="section-title">Academic Information</h3>
+                <div class="row g-3">
+                    <div class="col-md-2">
+                        {{ form.roll_no(class="form-control", placeholder="Roll No", min="1", max="999999", title="1-6 digits", required=true) }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.batch(class="form-control", placeholder="Batch", pattern="[A-Za-z0-9\\-/]+", title="Alphanumeric with -/", required=true) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.degree(class="form-control", placeholder="Degree", pattern="[A-Za-z\\s\\-\\.]+", title="Letters, spaces, hyphens and dots", required=true) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.faculty(class="form-control", placeholder="Faculty", pattern="[A-Za-z\\s]+", title="Letters and spaces only", required=true) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Third Section - Contact Info -->
+            <div class="form-section">
+                <h3 class="section-title">Contact Information</h3>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        {{ form.email_uni(class="form-control", placeholder="University Email", type="email", required=true) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.email_personal(class="form-control", placeholder="Personal Email", type="email", required=true) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.phone(class="form-control", placeholder="Phone (+92-3xx-xxxxxxx)", pattern="\\+92-3\\d{2}-\\d{7}", title="Format: +92-3xx-xxxxxxx", required=true) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.address(class="form-control", placeholder="Home Address", maxlength="150", required=true) }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h3 class="section-title">Location Information</h3>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        {{ form.zip_code(class="form-control", placeholder="Zip Code (5 digits)",
+                                       min="0", max="99999", required=true) }}
+                        {% for error in form.zip_code.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12 d-grid">
+                <button type="submit" class="btn btn-success btn-lg"
+                onclick="return confirmAdd()">Add Student</button>
+                </div>
+            </div>
+            <script>
+                function confirmAdd() {
+                return confirm('The student entry will be saved. Are you sure?');
+                }
+            </script>
+
+            <!-- Error Display -->
+            {% for field, errors in form.errors.items() %}
+                {% for error in errors %}
+                    <div class="alert alert-danger mt-2">{{ error }}</div>
+                {% endfor %}
+            {% endfor %}
+        </form>
     </div>
-<div class="container mt-4">
-    <form method="POST" action="/">
-        <input type="text" name="fname" placeholder="First Name"><br><br>
-        <input type="text" name="lname" placeholder="Last Name"><br><br>
-        <input type="number" name="age" placeholder="Age"><br><br>
-        <input type="text" name="city" placeholder="City"><br><br>
-        <button type="submit">Submit</button>
-    </form>
-
-    <table class="table mt-4">
-        <thead><tr><th>S.No</th><th>Name</th><th>Age</th><th>City</th></tr></thead>
-        <tbody>
-        {% for student in data %}
-        <tr>
-            <td>{{ student.sno }}</td>
-            <td>{{ student.fname }} {{ student.lname }}</td>
-            <td>{{ student.age }}</td>
-            <td>{{ student.city }}</td>
-            <td>
-                <a href="/update/{{ student.sno }}">Edit</a> |
-                <a href="/delete/{{ student.sno }}">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
-
 </body>
 </html>
